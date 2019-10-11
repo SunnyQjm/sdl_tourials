@@ -29,6 +29,8 @@ include_directories(include)
 
 add_subdirectory(lesson0)
 add_subdirectory(lesson1)
+add_subdirectory(lesson2)
+
 
 if (NOT ${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
     file(COPY "${PROJECT_SOURCE_DIR}/res" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

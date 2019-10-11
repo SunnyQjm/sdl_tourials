@@ -5,7 +5,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "res_path.h"
-#include <clean_up.h>
+#include "clean_up.h"
 
 int main() {
 
