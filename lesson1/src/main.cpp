@@ -52,7 +52,22 @@ int main() {
     }
 
     // Drawing the Texture
+    for (int i = 0; i < 3; i++) {
+        // First clear the renderer
+        SDL_RenderClear(ren);
+        // Draw the Texture
+        SDL_RenderCopy(ren, tex, nullptr, nullptr);
+        // Update the screen
+        SDL_RenderPresent(ren);
+        // Take a quick break after all that hard work
+        SDL_Delay(1000);
+    }
 
+    // Before Exit, we need to clean and destroy all SDL object
+    SDL_DestroyTexture(tex);
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
 
-
+    return 0;
 }
