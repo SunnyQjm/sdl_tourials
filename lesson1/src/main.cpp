@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "res_path.h"
+#include <clean_up.h>
 
 int main() {
 
@@ -35,8 +36,9 @@ int main() {
     std::string imagePath = getResourcePath("Lesson1") + "hello.bmp";
     SDL_Surface *bmp = SDL_LoadBMP(imagePath.c_str());
     if(bmp == nullptr) {
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
+        cleanup(ren, win);
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
         std::cout << "SDL_LoadBMP error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return 1;
@@ -44,8 +46,9 @@ int main() {
     SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, bmp);
     SDL_free(bmp);
     if(tex == nullptr) {
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
+        cleanup(ren, win);
+//        SDL_DestroyRenderer(ren);
+//        SDL_DestroyWindow(win);
         std::cout << "SDL_CreateTextureFromSurface error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return 1;
@@ -64,9 +67,10 @@ int main() {
     }
 
     // Before Exit, we need to clean and destroy all SDL object
-    SDL_DestroyTexture(tex);
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
+    cleanup(tex, ren, win);
+//    SDL_DestroyTexture(tex);
+//    SDL_DestroyRenderer(ren);
+//    SDL_DestroyWindow(win);
     SDL_Quit();
 
     return 0;
