@@ -28,6 +28,7 @@ include_directories(include)
 #target_link_libraries(sdl_tourials ${SDL2_LIBRARY})
 
 add_subdirectory(lesson0)
+add_subdirectory(lesson1)
 
 if (NOT ${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
     file(COPY "${PROJECT_SOURCE_DIR}/res" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
