@@ -32,6 +32,7 @@ add_subdirectory(lesson1)
 add_subdirectory(lesson2)
 add_subdirectory(lesson3)
 add_subdirectory(lesson4)
+add_subdirectory(lesson5)
 
 
 if (NOT ${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
