@@ -49,6 +49,12 @@ public:
             int w = 640, int h = 480, Uint32 flags = SDL_WINDOW_SHOWN
             );
 
+    SDL2Helper* createRenderer(
+            SDL_Renderer* ren,
+            int index,
+            Uint32 flags
+            );
+
 
     ///////////////////////////////////////////////////////////
     ///////// SDL2_image's wrapper functions

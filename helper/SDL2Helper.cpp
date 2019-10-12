@@ -18,6 +18,17 @@ SDL2Helper::SDL2Helper(Uint32 flags) {
     }
 }
 
+
+#ifdef SDL2_HELPER_USE_SDL2_IMAGE
+
+SDL2Helper *SDL2Helper::initSDL2Image(int flags) {
+//    if(IMG_Init(flags))
+    return this;
+}
+
+#endif
+
+
 SDL2Helper *SDL2Helper::createWindow(SDL_Window *win, const std::string &title,
                                      int x, int y, int w, int h, Uint32 flags) {
     win = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
@@ -30,10 +41,18 @@ SDL2Helper *SDL2Helper::createWindow(SDL_Window *win, const std::string &title,
     return this;
 }
 
-#ifdef SDL2_HELPER_USE_SDL2_IMAGE
-
-SDL2Helper *SDL2Helper::initSDL2Image(int flags) {
-//    if(IMG_Init(flags))
+SDL2Helper *SDL2Helper::createRenderer(SDL_Renderer *ren, int index, Uint32 flags) {
+    if (this->window == nullptr) {
+        logSDLError(std::cerr, "Please invoke createWindow to create a SDL_Window object success first!");
+        return this;
+    }
+    ren = SDL_CreateRenderer(this->window, index, flags);
+    if (ren == nullptr) {
+        this->logSDLError(std::cerr, "CreateRenderer")
+                ->quit();
+    } else {
+        this->renderer = ren;
+    }
     return this;
 }
 
@@ -54,4 +73,3 @@ SDL2Helper *SDL2Helper::quit() {
     return this;
 }
 
-#endif
