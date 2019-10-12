@@ -55,6 +55,12 @@ int main() {
         return 1;
     }
 
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG){
+        logSDLError(std::cout, "IMG_Init");
+        SDL_Quit();
+        return 1;
+    }
+
     //Setup our window and renderer
     SDL_Window *window = SDL_CreateWindow("Lesson 3", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr){
@@ -77,6 +83,7 @@ int main() {
     //Make sure they both loaded ok
     if (background == nullptr || image == nullptr){
         cleanup(background, image, renderer, window);
+        IMG_Quit();
         SDL_Quit();
         return 1;
     }
