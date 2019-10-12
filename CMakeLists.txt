@@ -23,11 +23,16 @@ endif()
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(include)
+include_directories(helper)
 
 #add_executable(sdl_tourials main.cpp)
 #target_link_libraries(sdl_tourials ${SDL2_LIBRARY})
+add_library(sdl_helper_library STATIC helper/SDL2Helper.cpp)
+set(SDL_HELPER_LIBRARY sdl_helper_library)
+
 
 add_subdirectory(lesson0)
+
 add_subdirectory(lesson1)
 add_subdirectory(lesson2)
 add_subdirectory(lesson3)
