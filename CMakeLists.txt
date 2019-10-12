@@ -30,6 +30,7 @@ include_directories(include)
 add_subdirectory(lesson0)
 add_subdirectory(lesson1)
 add_subdirectory(lesson2)
+add_subdirectory(lesson3)
 
 
 if (NOT ${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
