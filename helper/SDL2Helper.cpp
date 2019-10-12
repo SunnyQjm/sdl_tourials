@@ -121,6 +121,29 @@ SDL2Helper *SDL2Helper::delay(Uint32 ms) {
     return this;
 }
 
+SDL_Texture *SDL2Helper::loadTextureFromBMP(const std::string &filePth) {
+    SDL_Texture *texture = nullptr;
+    SDL_Surface * image = this->loadBMP(filePth);
+    texture = this->createTextureFromSurface(image);
+    return texture;
+}
+
+SDL2Helper *SDL2Helper::renderTexture(SDL_Texture *texture, int x, int y, int w, int h) {
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = w;
+    dst.h = h;
+    this->renderCopy(texture, nullptr, &dst);
+    return this;
+}
+
+SDL2Helper *SDL2Helper::renderTexture(SDL_Texture *texture, int x, int y) {
+    int w, h;
+    SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
+    return renderTexture(texture, x, y, w, h);
+}
+
 
 
 

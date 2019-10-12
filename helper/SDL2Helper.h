@@ -4,8 +4,8 @@
 
 #ifndef SDL_TOURIALS_SDL2HELPER_H
 #define SDL_TOURIALS_SDL2HELPER_H
-#define SDL2_HELPER_USE_SDL2_IMAGE
-#define SDL2_HELPER_USE_SDL2_TTF
+//#define SDL2_HELPER_USE_SDL2_IMAGE
+//#define SDL2_HELPER_USE_SDL2_TTF
 
 #include <iostream>
 #include <SDL2/SDL.h>
@@ -116,6 +116,10 @@ public:
     SDL2Helper *renderClear();
     SDL2Helper *renderCopy(SDL_Texture *texture, const SDL_Rect *srcRect = nullptr, const SDL_Rect *dstRect = nullptr);
     SDL2Helper *renderPresent();
+    SDL_Texture *loadTextureFromBMP(const std::string &filePth);
+
+    SDL2Helper *renderTexture(SDL_Texture *texture, int x, int y, int w, int h);
+    SDL2Helper *renderTexture(SDL_Texture *texture, int x, int y);
 
 
     //////////////////////////////////////////////////////////
