@@ -27,8 +27,8 @@ include_directories(helper)
 
 #add_executable(sdl_tourials main.cpp)
 #target_link_libraries(sdl_tourials ${SDL2_LIBRARY})
-add_library(sdl_helper_library STATIC helper/SDL2Helper.cpp)
-set(SDL_HELPER_LIBRARY sdl_helper_library)
+add_library(sdl_helper STATIC helper/SDL2Helper.cpp)
+set(SDL_HELPER_LIBRARY sdl_helper)
 
 
 add_subdirectory(lesson0)
