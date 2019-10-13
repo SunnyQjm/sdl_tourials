@@ -13,7 +13,9 @@
 
 // Judge if use SDL2_image extension library
 #ifdef SDL2_HELPER_USE_SDL2_IMAGE
+
 #include <SDL2/SDL_image.h>
+
 #endif
 
 // Judge if use SDL2_ttf extension library
@@ -22,38 +24,40 @@
 #endif
 
 namespace SDLCleanUp {
-    template <typename T, typename... Args>
-    void cleanup(T *t, Args&&... args) {
+    template<typename T, typename... Args>
+    void cleanup(T *t, Args &&... args) {
         cleanup(t);
         cleanup(std::forward<Args>(args)...);
     }
 
 
-    template <>
-    inline void cleanup<SDL_Window>(SDL_Window* win) {
-        if(!win)
+    template<>
+    inline void cleanup<SDL_Window>(SDL_Window *win) {
+        if (!win)
             return;
         SDL_DestroyWindow(win);
     }
 
 
     template<>
-    inline void cleanup<SDL_Renderer>(SDL_Renderer *ren){
-        if (!ren){
+    inline void cleanup<SDL_Renderer>(SDL_Renderer *ren) {
+        if (!ren) {
             return;
         }
         SDL_DestroyRenderer(ren);
     }
+
     template<>
-    inline void cleanup<SDL_Texture>(SDL_Texture *tex){
-        if (!tex){
+    inline void cleanup<SDL_Texture>(SDL_Texture *tex) {
+        if (!tex) {
             return;
         }
         SDL_DestroyTexture(tex);
     }
+
     template<>
-    inline void cleanup<SDL_Surface>(SDL_Surface *surf){
-        if (!surf){
+    inline void cleanup<SDL_Surface>(SDL_Surface *surf) {
+        if (!surf) {
             return;
         }
         SDL_FreeSurface(surf);
@@ -61,6 +65,13 @@ namespace SDLCleanUp {
 }
 
 class SDL2Helper {
+    class SDLFailedException : public std::runtime_error {
+    public:
+        SDLFailedException(const std::string &what) : std::runtime_error(what) {
+
+        }
+    };
+
 private:
     bool isSDL2Init = false;
     bool isSDL2ImageInit = false;
@@ -83,19 +94,22 @@ public:
      * the other param is same as SDL_CreateWindow
      * @return
      */
-    SDL2Helper* createWindow(
-            const std::string& title, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED,
+    SDL2Helper *
+    createWindow(
+            const std::string &title, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED,
             int w = 640, int h = 480, Uint32 flags = SDL_WINDOW_SHOWN
-            );
+    ) noexcept(false);
 
-    SDL2Helper* createRenderer(int index = -1, Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL2Helper *
+    createRenderer(int index = -1, Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) noexcept(false);
 
 
     ///////////////////////////////////////////////////////////
     ///////// Getter
     ///////////////////////////////////////////////////////////
-    SDL_Window* getWindow();
-    SDL_Renderer* getRenderer();
+    SDL_Window *getWindow();
+
+    SDL_Renderer *getRenderer();
 
 
     ///////////////////////////////////////////////////////////
@@ -109,16 +123,28 @@ public:
      * @return
      */
     SDL2Helper *initSDL2Image(int flags);
+    SDL_Surface *loadFromSDL2Image(const std::string &path);
+    SDL_Texture *loadTextureUseSDL2Image(const std::string &path);
+
 #endif
 
-    SDL_Surface *loadBMP(const std::string &filePath);
-    SDL_Texture *createTextureFromSurface(SDL_Surface *surface);
+    //////////////////////////////////////////////////////////
+    //////// SDL2's wrapper functions
+    //////////////////////////////////////////////////////////
+    SDL_Surface *loadBMP(const std::string &filePath) noexcept(false);
+
+    SDL_Texture *createTextureFromSurface(SDL_Surface *surface) noexcept(false);
+
     SDL2Helper *renderClear();
+
     SDL2Helper *renderCopy(SDL_Texture *texture, const SDL_Rect *srcRect = nullptr, const SDL_Rect *dstRect = nullptr);
+
     SDL2Helper *renderPresent();
-    SDL_Texture *loadTextureFromBMP(const std::string &filePth);
+
+    SDL_Texture *loadTextureFromBMP(const std::string &filePth) noexcept(false);
 
     SDL2Helper *renderTexture(SDL_Texture *texture, int x, int y, int w, int h);
+
     SDL2Helper *renderTexture(SDL_Texture *texture, int x, int y);
 
 
@@ -126,7 +152,11 @@ public:
     ///////// Utils
     //////////////////////////////////////////////////////////
     SDL2Helper *logSDLError(std::ostream &os, const std::string &msg);
+
     SDL2Helper *quit();
+
+    void throwSDLFailedException(const std::string &what);
+
     SDL2Helper *delay(Uint32 ms);
 
     /**
@@ -137,5 +167,38 @@ public:
         this->quit();
     }
 };
+
+
+#ifdef SDL2_HELPER_USE_SDL2_IMAGE
+
+
+SDL2Helper *SDL2Helper::initSDL2Image(int flags) {
+    auto result = IMG_Init(flags);
+    if((result & flags) != flags) {
+        this->throwSDLFailedException("IMG_Init");
+    } else {
+        isSDL2ImageInit = true;
+    }
+    return this;
+}
+
+SDL_Texture *SDL2Helper::loadTextureUseSDL2Image(const std::string &path) {
+    SDL_Texture *texture = IMG_LoadTexture(this->renderer, path.c_str());
+    if(texture == nullptr) {
+        this->logSDLError(std::cerr, "Use SDL2_image load texture");
+    }
+    return texture;
+}
+
+
+SDL_Surface *SDL2Helper::loadFromSDL2Image(const std::string &path) {
+    SDL_Surface *surface = IMG_Load(path.c_str());
+    if(surface == nullptr) {
+        this->logSDLError(std::cerr, "Use SDL2_image load surface");
+    }
+    return IMG_Load(path.c_str());
+}
+
+#endif
 
 #endif //SDL_TOURIALS_SDL2HELPER_H

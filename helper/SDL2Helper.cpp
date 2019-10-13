@@ -19,35 +19,22 @@ SDL2Helper::SDL2Helper(Uint32 flags) {
 }
 
 
-#ifdef SDL2_HELPER_USE_SDL2_IMAGE
-
-SDL2Helper *SDL2Helper::initSDL2Image(int flags) {
-//    if(IMG_Init(flags))
-    return this;
-}
-
-#endif
-
-
 SDL2Helper *SDL2Helper::createWindow(const std::string &title,
                                      int x, int y, int w, int h, Uint32 flags) {
     window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
     if (window == nullptr) {
-        this->logSDLError(std::cerr, "CreateWindow")
-                ->quit();
+        this->throwSDLFailedException("CreateWindow");
     }
     return this;
 }
 
 SDL2Helper *SDL2Helper::createRenderer(int index, Uint32 flags) {
     if (this->window == nullptr) {
-        logSDLError(std::cerr, "Please invoke createWindow to create a SDL_Window object success first!");
-        return this;
+        throw SDLFailedException("Please invoke createWindow to create a SDL_Window object success first!");
     }
     renderer = SDL_CreateRenderer(this->window, index, flags);
     if (renderer == nullptr) {
-        this->logSDLError(std::cerr, "CreateRenderer")
-                ->quit();
+        this->throwSDLFailedException("CreateRender");
     }
     return this;
 }
@@ -84,9 +71,7 @@ SDL_Renderer *SDL2Helper::getRenderer() {
 SDL_Surface *SDL2Helper::loadBMP(const std::string &filePath) {
     SDL_Surface *bmp = SDL_LoadBMP(filePath.c_str());
     if (bmp == nullptr) {
-        SDLCleanUp::cleanup(this->renderer, this->window);
-        this->logSDLError(std::cerr, "SDL_LoadBMP -> " + filePath)
-                ->quit();
+        this->throwSDLFailedException("SDL_LoadBMP -> " + filePath);
     }
     return bmp;
 }
@@ -94,9 +79,7 @@ SDL_Surface *SDL2Helper::loadBMP(const std::string &filePath) {
 SDL_Texture *SDL2Helper::createTextureFromSurface(SDL_Surface *surface) {
     SDL_Texture *tex = SDL_CreateTextureFromSurface(this->renderer, surface);
     if (tex == nullptr) {
-        SDLCleanUp::cleanup(this->renderer, this->window);
-        this->logSDLError(std::cerr, "SDL_CreateTextFromSurface")
-                ->quit();
+        this->throwSDLFailedException("SDL_CreateTextFromSurface");
     }
     return tex;
 }
@@ -123,7 +106,7 @@ SDL2Helper *SDL2Helper::delay(Uint32 ms) {
 
 SDL_Texture *SDL2Helper::loadTextureFromBMP(const std::string &filePth) {
     SDL_Texture *texture = nullptr;
-    SDL_Surface * image = this->loadBMP(filePth);
+    SDL_Surface *image = this->loadBMP(filePth);
     texture = this->createTextureFromSurface(image);
     return texture;
 }
@@ -143,6 +126,14 @@ SDL2Helper *SDL2Helper::renderTexture(SDL_Texture *texture, int x, int y) {
     SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
     return renderTexture(texture, x, y, w, h);
 }
+
+void SDL2Helper::throwSDLFailedException(const std::string &what) {
+    std::string what_ = what + " -> " + SDL_GetError();
+    throw SDLFailedException(what_);
+}
+
+
+
 
 
 
