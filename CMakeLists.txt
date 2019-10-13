@@ -27,12 +27,23 @@ include_directories(helper)
 
 #add_executable(sdl_tourials main.cpp)
 #target_link_libraries(sdl_tourials ${SDL2_LIBRARY})
-add_library(sdl_helper STATIC helper/SDL2Helper.cpp)
+add_library(sdl_helper SHARED helper/SDL2Helper.cpp)
+add_library(sdl_helper_static STATIC helper/SDL2Helper.cpp)
+set_target_properties(sdl_helper_static PROPERTIES OUTPUT_NAME "sdl_helper")
+GET_TARGET_PROPERTY (OUTPUT_VALUE sdl_helper_static OUTPUT_NAME)
+
+MESSAGE (STATUS "This is the hello_static OUTPUT_NAME: " ${OUTPUT_VALUE})
+
+INSTALL (TARGETS sdl_helper sdl_helper_static LIBRARY DESTINATION lib
+
+        ARCHIVE DESTINATION lib)
+
+INSTALL (FILES helper/SDL2Helper.h DESTINATION include/sdl_helper)
+
 set(SDL_HELPER_LIBRARY sdl_helper)
 
 
 add_subdirectory(lesson0)
-
 add_subdirectory(lesson1)
 add_subdirectory(lesson2)
 add_subdirectory(lesson3)
