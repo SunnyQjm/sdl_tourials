@@ -123,8 +123,10 @@ public:
      * @return
      */
     SDL2Helper *initSDL2Image(int flags);
-    SDL_Surface *loadFromSDL2Image(const std::string &path);
+    SDL_Surface *loadUseSDL2Image(const std::string &path);
     SDL_Texture *loadTextureUseSDL2Image(const std::string &path);
+    SDL_Surface *loadFromMemUseSDL2Image(void *buffer, int size, int freesrc = 1);
+    SDL_Texture *loadTextureFromMemUseSDL2Image(void *buffer, int size, int freesrc = 1);
 
 #endif
 
@@ -191,7 +193,7 @@ SDL_Texture *SDL2Helper::loadTextureUseSDL2Image(const std::string &path) {
 }
 
 
-SDL_Surface *SDL2Helper::loadFromSDL2Image(const std::string &path) {
+SDL_Surface *SDL2Helper::loadUseSDL2Image(const std::string &path) {
     SDL_Surface *surface = IMG_Load(path.c_str());
     if(surface == nullptr) {
         this->logSDLError(std::cerr, "Use SDL2_image load surface");
@@ -199,6 +201,13 @@ SDL_Surface *SDL2Helper::loadFromSDL2Image(const std::string &path) {
     return IMG_Load(path.c_str());
 }
 
+SDL_Surface *SDL2Helper::loadFromMemUseSDL2Image(void *buffer, int size, int freesrc) {
+    return IMG_Load_RW(SDL_RWFromMem(buffer, size), freesrc);
+}
+
+SDL_Texture *SDL2Helper::loadTextureFromMemUseSDL2Image(void *buffer, int size, int freesrc) {
+    return IMG_LoadTexture_RW(this->renderer, SDL_RWFromMem(buffer, size), freesrc);
+}
 #endif
 
 #endif //SDL_TOURIALS_SDL2HELPER_H
